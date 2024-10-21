@@ -13,7 +13,7 @@ source("scripts/data_loading.R")
 # source("scripts/data_preprocessing.R")
 # source("scripts/analysis.R")
 
-st_info <- as_tibble(students_info())
+st_info <- as_tibble(students_info(202402,'재학생'))
 
 # 학과별, 국적별 학생 수 집계
 st_foreigner <- st_info %>%
