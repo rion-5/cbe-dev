@@ -1,0 +1,80 @@
+---
+title: "국적별 학과 학생수 분석"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  word_document: default
+fontsize: 11pt
+mainfont: Noto Sans KR
+geometry: margin=1in
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+library(gridExtra)
+library(showtext)
+
+# Enable fonts
+font_add_google("Noto Sans KR", "notosanskr")
+showtext_auto()
+
+# Data loading
+source('./scripts/data_loading.R')
+students_info <- students_info(202402,'재학생')
+students_dept <- students_info %>%
+  group_by(학과, 국적) %>%
+  summarise(학생수 = n(), .groups = 'drop')
+
+students_foreigner <- students_info %>%
+  group_by(학과, 국적) %>%
+  summarise(학생수 = n(), .groups = 'drop') %>%
+  filter(국적 != '대한민국') %>%
+  arrange(학과, desc(학생수))
+
+# y-axis max for all charts
+max_y <- max(students_dept$학생수)
+all_nationalities <- unique(students_dept$국적)
+
+p1 <- ggplot(students_dept %>% filter(학과 == '경제학부'), aes(x = 국적, y = 학생수)) +   
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = 학생수), vjust = -0.5, size = 3) +
+  ylim(0, max_y) +
+  scale_x_discrete(limits = all_nationalities) +
+  ggtitle("경제학부 국적별 학생수") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1))
+
+p2 <- ggplot(students_dept %>% filter(학과 == '경영학부'), aes(x = 국적, y = 학생수)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = 학생수), vjust = -0.5, size = 3) +
+  scale_x_discrete(limits = all_nationalities) +
+  ylim(0, max_y) +
+  ggtitle("경영학부 국적별 학생수") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1))
+
+p3 <- ggplot(students_dept %>% filter(학과 == '보험계리학과'), aes(x = 국적, y = 학생수)) +   
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = 학생수), vjust = -0.5, size = 3) +
+  scale_x_discrete(limits = all_nationalities) +
+  ylim(0, max_y) +
+  ggtitle("보험계리학과 국적별 학생수") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1))
+
+p4 <- ggplot(students_dept %>% filter(학과 == '회계세무학과'), aes(x = 국적, y = 학생수)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = 학생수), vjust = -0.5, size = 3) +
+  scale_x_discrete(limits = all_nationalities) +
+  ylim(0, max_y) +
+  ggtitle("회계세무학과 국적별 학생수") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1))
+
+grid.arrange(p1, p2, p3, p4, nrow = 2, ncol = 2)

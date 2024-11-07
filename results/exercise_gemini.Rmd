@@ -1,0 +1,85 @@
+---
+title: "경상대 학과별 국적별 학생수 분석"
+author: "rion5"
+date: "2024-10-22"
+output:
+  pdf_document:
+    latex_engine: xelatex  # or you can use lualatex
+  html_document: default
+mainfont: "Noto Sans KR"
+---
+
+## 서론
+
+본 보고서는 경상대학교 학생들의 학과별 국적별 학생수를 시각화하여 분석한 결과를 제시합니다. 특히, 경영학부, 경제학부, 보험계리학과, 회계세무학과의 국적별 학생 분포를 중점적으로 살펴보고자 합니다.
+
+## 데이터 준비 및 분석
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+library(tidyverse)
+library(ggplot2)
+library(gridExtra)
+library(showtext)
+
+# Enable fonts
+showtext_auto()
+
+# Data loading
+source('./scripts/data_loading.R')
+students_info <- students_info(202402,'재학생')
+students_dept <- students_info %>%
+  group_by(학과, 국적) %>%
+  summarise(학생수 = n(), .groups = 'drop')
+
+students_foreigner <- students_info %>%
+  group_by(학과, 국적) %>%
+  summarise(학생수 = n(), .groups = 'drop') %>%
+  filter(국적 != '대한민국') %>%
+  arrange(학과, desc(학생수))
+
+# y-axis max for all charts
+max_y <- max(students_dept$학생수) + 50
+all_nationalities <- unique(students_dept$국적)
+
+p1 <- ggplot(students_dept %>% filter(학과 == '경제학부'), aes(x = 국적, y = 학생수)) +   
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = 학생수), vjust = -0.5, size = 3) +
+  ylim(0, max_y) +
+  scale_x_discrete(limits = all_nationalities) +
+  ggtitle("경제학부 국적별 학생수") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p2 <- ggplot(students_dept %>% filter(학과 == '경영학부'), aes(x = 국적, y = 학생수)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = 학생수), vjust = -0.5, size = 3) +
+  scale_x_discrete(limits = all_nationalities) +
+  ylim(0, max_y) +
+  ggtitle("경영학부 국적별 학생수") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p3 <- ggplot(students_dept %>% filter(학과 == '보험계리학과'), aes(x = 국적, y = 학생수)) +   
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = 학생수), vjust = -0.5, size = 3) +
+  scale_x_discrete(limits = all_nationalities) +
+  ylim(0, max_y) +
+  ggtitle("보험계리학과 국적별 학생수") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+p4 <- ggplot(students_dept %>% filter(학과 == '회계세무학과'), aes(x = 국적, y = 학생수)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_text(aes(label = 학생수), vjust = -0.5, size = 3) +
+  scale_x_discrete(limits = all_nationalities) +
+  ylim(0, max_y) +
+  ggtitle("회계세무학과 국적별 학생수") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+grid.arrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
+```
+
+## 결론
+
+-   전반적으로 중국 국적을 가진 외국인 학생이 많으며, 서구권 학생은 극소수이다.

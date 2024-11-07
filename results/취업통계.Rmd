@@ -1,0 +1,65 @@
+### 로지스틱 회귀분석 결과 보고서
+
+```         
+> # 로지스틱 회귀 모델 학습
+> model <- glm(employment_status ~ GPA + TOEIC_score, data = trainData, family = binomial)
+> summary(model)
+
+Call:
+glm(formula = employment_status ~ GPA + TOEIC_score, family = binomial, 
+    data = trainData)
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)  
+(Intercept)  1.7753518  1.0764503   1.649   0.0991 .
+GPA         -0.3413780  0.3155326  -1.082   0.2793  
+TOEIC_score  0.0001342  0.0008859   0.151   0.8796  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 388.47  on 299  degrees of freedom
+Residual deviance: 387.16  on 297  degrees of freedom
+AIC: 393.16
+
+Number of Fisher Scoring iterations: 4
+```
+
+**분석 개요**\
+본 분석에서는 학업 성적(GPA) 및 TOEIC 점수가 취업 상태(`employment_status`)에 미치는 영향을 파악하기 위해 로지스틱 회귀 모델을 적용하였습니다. `employment_status`는 이항 변수로, 학습 데이터(`trainData`)를 활용하여 모델을 학습하였습니다.
+
+**모델 설명**\
+모델은 아래의 변수로 구성된 회귀식을 통해 `employment_status`를 예측합니다:
+
+-   **GPA**: 학생의 평점평균
+-   **TOEIC_score**: 학생의 토익점수
+
+**회귀분석 결과**\
+회귀모델에 대한 상세 결과는 다음과 같습니다.
+
+-   **Intercept(절편)**: 1.7754
+    -   표준 오차: 1.0764
+    -   z-값: 1.649
+    -   p-값: 0.0991
+    -   `employment_status`가 0 (미취업)일 때의 로그 오즈 값에 대한 절편 값으로, 유의미하지 않은 경향을 보였습니다 (p \> 0.05).
+-   **GPA**: -0.3414
+    -   표준 오차: 0.3155
+    -   z-값: -1.082
+    -   p-값: 0.2793
+    -   해석: GPA가 한 단위 증가할 때 `employment_status`가 1(취업)일 확률은 감소하는 경향이 있으나, 이 변수의 영향은 통계적으로 유의하지 않았습니다 (p \> 0.05).
+-   **TOEIC_score**: 0.0001
+    -   표준 오차: 0.0009
+    -   z-값: 0.151
+    -   p-값: 0.8796
+    -   해석: TOEIC 점수가 높을수록 `employment_status`가 1(취업)일 확률이 미세하게 증가하는 경향이 있으나, 통계적으로 유의하지 않았습니다 (p \> 0.05).
+
+**모델 적합도 지표**\
+- **Null deviance**: 388.47 - **Residual deviance**: 387.16 - **AIC**: 393.16\
+이 모델의 AIC 값은 393.16으로, 모델의 적합도를 판단하는 기준으로 사용됩니다. 그러나 현재 변수들의 유의미성이 높지 않아 추가 변수의 고려가 필요할 수 있습니다.
+
+**결론**\
+본 로지스틱 회귀 모델에서 GPA와 TOEIC 점수는 `employment_status`에 대해 유의미한 예측 변수가 아닌 것으로 나타났습니다. 즉, 이 두 변수만으로는 학생의 취업 상태를 설명하기 어려운 것으로 보입니다. 모델의 성능을 개선하기 위해 다른 변수를 추가하거나 모델링 기법을 수정할 필요가 있습니다.
+
+**해석 제한점**\
+분석 결과는 학습 데이터의 표본에 기반하며, 해당 결과가 모든 집단에 일반화될 수 없음을 고려해야 합니다.
